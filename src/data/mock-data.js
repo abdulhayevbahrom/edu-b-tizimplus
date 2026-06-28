@@ -1,6 +1,6 @@
 export const teachers = [
   {
-    id: 'teacher_1',
+    id: 'teacher_1222',
     fullName: 'Ali Karimov',
     subject: 'IT',
     phone: '+998 90 123 45 67',
