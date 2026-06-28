@@ -39,7 +39,7 @@ Oddiy serverga o'tilganda Socket.IO, lokal upload va background interval avvalgi
 
 ## Contabo VPS deploy
 
-Loyiha serverda `edu-tizimplus` process nomi bilan PM2 orqali `4020` portda yuradi. GitHub `main` branchga push bo'lganda workflow ishga tushadi, lekin server faqat pushdagi commit message ichida `deploy` so'zi bo'lsa yangilanadi. Deploy paytida `.github/workflows/deploy.yml` serverga SSH orqali kirib, `/var/www/edu-tizimplus` papkasida `git pull` qiladi, yangi package bo'lsa `npm ci --omit=dev` qiladi va PM2 restart beradi. Public domain: `edu-tizimplus.my-hotels.uz`.
+Loyiha serverda `/root/edu-tizimplus` papkasida `edu-tizimplus` process nomi bilan PM2 orqali `4020` portda yuradi. GitHub `main` branchga push bo'lganda workflow ishga tushadi, lekin server faqat pushdagi commit message ichida `deploy` so'zi bo'lsa yangilanadi. Deploy paytida `.github/workflows/deploy.yml` serverga SSH orqali kirib, `/root/edu-tizimplus` papkasida `git pull` qiladi, yangi package bo'lsa `npm ci --omit=dev` qiladi va PM2 restart beradi. Public domain: `edu-tizimplus.my-hotels.uz`.
 
 ### 1. VPSni bir marta tayyorlash
 
@@ -51,15 +51,13 @@ sudo apt install -y git curl nginx
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 sudo npm install -g pm2
-sudo mkdir -p /var/www
-sudo chown -R $USER:$USER /var/www
 ```
 
 `.env` faylini serverda yarating:
 
 ```bash
-mkdir -p /var/www/edu-tizimplus
-nano /var/www/edu-tizimplus/.env
+mkdir -p /root/edu-tizimplus
+nano /root/edu-tizimplus/.env
 ```
 
 Kerakli envlar:
@@ -159,7 +157,7 @@ GitHub repo ichida `Settings -> Secrets and variables -> Actions -> New reposito
 - `VPS_USER` - SSH user, masalan `root` yoki deploy user
 - `VPS_SSH_KEY` - yuqoridagi private key matni
 - `VPS_PORT` - SSH port, odatda `22` (ixtiyoriy)
-- `APP_DIR` - `/var/www/edu-tizimplus` (ixtiyoriy)
+- `APP_DIR` - `/root/edu-tizimplus` (ixtiyoriy)
 
 Oddiy push, server yangilanmaydi:
 
