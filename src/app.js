@@ -17,24 +17,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { authenticate, requireAnyPermission } from "./middleware/auth.js";
 import { notFound } from "./middleware/notFound.js";
+import { corsOptions } from "./config/cors.js";
 import { connectDB } from "./config/db.js";
 import { runBalanceMaintenance } from "./services/balance-maintenance.service.js";
 
 const app = express();
-
-const allowedCorsOrigins = ["https://edu-tizimplus.vercel.app"];
-
-const corsOptions = {
-  origin(origin, callback) {
-    if (!origin || allowedCorsOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    return callback(new Error(`CORS origin ruxsat etilmagan: ${origin}`));
-  },
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
 
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));

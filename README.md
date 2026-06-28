@@ -39,7 +39,7 @@ Oddiy serverga o'tilganda Socket.IO, lokal upload va background interval avvalgi
 
 ## Contabo VPS deploy
 
-Loyiha serverda `/root/edu-tizimplus` papkasida `edu-tizimplus` process nomi bilan PM2 orqali `4020` portda yuradi. GitHub `main` branchga push bo'lganda workflow ishga tushadi, lekin server faqat pushdagi commit message ichida `deploy` so'zi bo'lsa yangilanadi. Deploy paytida `.github/workflows/deploy.yml` serverga SSH orqali kirib, `/root/edu-tizimplus` papkasida `git pull` qiladi, yangi package bo'lsa `npm ci --omit=dev` qiladi va PM2 restart beradi. Public domain: `edu-tizimplus.my-hotels.uz`.
+Loyiha serverda `/root/edu-tizimplus` papkasida `edu-tizimplus` process nomi bilan PM2 orqali `4021` portda yuradi. GitHub `main` branchga push bo'lganda workflow ishga tushadi, lekin server faqat pushdagi commit message ichida `deploy` so'zi bo'lsa yangilanadi. Deploy paytida `.github/workflows/deploy.yml` serverga SSH orqali kirib, `/root/edu-tizimplus` papkasida `git pull` qiladi, yangi package bo'lsa `npm ci --omit=dev` qiladi va PM2 restart beradi. Public domain: `edu-tizimplus.my-hotels.uz`.
 
 ### 1. VPSni bir marta tayyorlash
 
@@ -67,7 +67,7 @@ MONGODB_URI=mongodb://127.0.0.1:27017
 MONGODB_DB_NAME=sab_center
 AUTH_SECRET=replace-with-a-long-random-secret
 CRON_SECRET=replace-with-another-long-random-secret
-PORT=4020
+PORT=4021
 ```
 
 Secret yaratish:
@@ -102,7 +102,7 @@ server {
     server_name edu-tizimplus.my-hotels.uz;
 
     location / {
-        proxy_pass http://127.0.0.1:4020;
+        proxy_pass http://127.0.0.1:4021;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";

@@ -7,7 +7,7 @@ import { startBalanceMaintenance } from './services/balance-maintenance.service.
 
 dotenv.config();
 
-const port = process.env.PORT || 4020;
+const port = process.env.PORT || 4021;
 
 async function bootstrap() {
   try {

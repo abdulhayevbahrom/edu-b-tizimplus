@@ -1,4 +1,5 @@
 import { Server } from 'socket.io';
+import { allowedCorsOrigins } from './config/cors.js';
 import { User } from './models/user.model.js';
 import { verifyToken } from './utils/auth.js';
 
@@ -7,7 +8,8 @@ let ioInstance = null;
 export function initSocket(server) {
   ioInstance = new Server(server, {
     cors: {
-      origin: '*',
+      origin: allowedCorsOrigins,
+      methods: ['GET', 'POST'],
     },
   });
 
