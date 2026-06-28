@@ -1,0 +1,71 @@
+name: Deploy to Contabo VPS
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: edu-tizimplus-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: contains(join(github.event.commits.*.message, ' '), 'deploy')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PORT: ${{ secrets.VPS_PORT || 22 }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          APP_DIR: ${{ secrets.APP_DIR || '/var/www/edu-tizimplus' }}
+          REPO_URL: https://github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/edu-tizimplus_key
+          chmod 600 ~/.ssh/edu-tizimplus_key
+          ssh-keyscan -p "$VPS_PORT" "$VPS_HOST" >> ~/.ssh/known_hosts
+
+          ssh -i ~/.ssh/edu-tizimplus_key -p "$VPS_PORT" "$VPS_USER@$VPS_HOST" \
+            "APP_DIR='$APP_DIR' REPO_URL='$REPO_URL' bash -s" <<'EOF'
+          set -euo pipefail
+
+          if ! command -v git >/dev/null 2>&1; then
+            echo "git topilmadi. Serverga git o'rnating."
+            exit 1
+          fi
+
+          if ! command -v npm >/dev/null 2>&1; then
+            echo "npm topilmadi. Serverga Node.js 20+ o'rnating."
+            exit 1
+          fi
+
+          if ! command -v pm2 >/dev/null 2>&1; then
+            npm install -g pm2
+          fi
+
+          mkdir -p "$(dirname "$APP_DIR")" "$APP_DIR"
+
+          if [ ! -d "$APP_DIR/.git" ]; then
+            tmp_dir="$(mktemp -d)"
+            git clone "$REPO_URL" "$tmp_dir"
+            cp -a "$tmp_dir"/. "$APP_DIR"/
+            rm -rf "$tmp_dir"
+          fi
+
+          cd "$APP_DIR"
+          git pull --ff-only origin main
+          npm ci --omit=dev
+
+          if pm2 describe edu-tizimplus >/dev/null 2>&1; then
+            pm2 restart edu-tizimplus --update-env
+          else
+            pm2 start ecosystem.config.cjs --env production
+          fi
+
+          pm2 save
+          EOF
